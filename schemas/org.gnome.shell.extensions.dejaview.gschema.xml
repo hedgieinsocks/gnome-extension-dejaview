@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.dejaview" path="/org/gnome/shell/extensions/dejaview/">
+    <key name="interval-min" type="i">
+      <default>15</default>
+    </key>
+    <key name="message-text" type="s">
+      <default>"It is time to stretch your back!"</default>
+    </key>
+    <key name="timer-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="show-timer" type="b">
+      <default>true</default>
+    </key>
+    <key name="icon-name" type="s">
+      <default>"alarm-symbolic"</default>
+    </key>
+    <key name="play-sound" type="b">
+      <default>false</default>
+    </key>
+    <key name="sound-name" type="s">
+      <default>"complete"</default>
+    </key>
+    <key name="urgency-level" type="i">
+      <default>1</default>
+    </key>
+  </schema>
+</schemalist>

@@ -1,0 +1,9 @@
+{
+    "uuid": "dejaview@hedgie.tech",
+    "name": "Dejaview",
+    "description": "Show a notification with a chosen frequency",
+    "version": 5,
+    "shell-version": [ "43" ],
+    "settings-schema": "org.gnome.shell.extensions.dejaview",
+    "url": "https://github.com/hedgieinsocks/dejaview"
+}
