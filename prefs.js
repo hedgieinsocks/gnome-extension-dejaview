@@ -103,7 +103,7 @@ function fillPreferencesWindow(window) {
     // Urgency Level
     const rowUrgency = new Adw.ActionRow({
         title: 'Urgency Level',
-        subtitle: 'Critical notifications are dismissed only by clicking on them',
+        subtitle: 'Critical ones are auto-expanded but get dismissed only after a click',
     });
     groupGeneral.add(rowUrgency);
 

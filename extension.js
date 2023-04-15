@@ -13,6 +13,10 @@ const Clutter = imports.gi.Clutter;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
+const Config = imports.misc.config;
+const shellVersion = Math.floor(Config.PACKAGE_VERSION);
+const toggleNameProperty = (shellVersion > 43) ? 'title' : 'label';
+
 const ICON = 'alarm-symbolic';
 
 const urgencyMapping = {
@@ -26,7 +30,7 @@ const FeatureMenuToggle = GObject.registerClass(
 class FeatureMenuToggle extends QuickSettings.QuickMenuToggle {
     _init(_settings) {
         super._init({
-            label: Me.metadata.name,
+            [toggleNameProperty]: Me.metadata.name,
             iconName: ICON,
             toggleMode: true,
         });
@@ -35,13 +39,13 @@ class FeatureMenuToggle extends QuickSettings.QuickMenuToggle {
             this, 'checked',
             Gio.SettingsBindFlags.DEFAULT);
 
-        this.menu.setHeader(ICON, Me.metadata.name,
-            Me.metadata.description);
+        this.menu.setHeader(ICON, Me.metadata.name);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         this.menu.addAction('Settings',
-            () => ExtensionUtils.openPrefs());
+            () => ExtensionUtils.openPrefs(),
+            'preferences-system-symbolic');
     }
 });
 
@@ -66,6 +70,13 @@ class FeatureIndicator extends QuickSettings.SystemIndicator {
 
         QuickSettingsMenu._indicators.add_child(this);
         QuickSettingsMenu._addItems(this.quickSettingsItems);
+
+        if (shellVersion > 43) {
+            for (const item of this.quickSettingsItems) {
+                QuickSettingsMenu.menu._grid.set_child_below_sibling(item,
+                    QuickSettingsMenu._backgroundApps.quickSettingsItems[0]);
+            }
+        }
     }
 });
 
@@ -82,6 +93,7 @@ class Extension {
         this._diffSec = null;
         this._settings = null;
         this._showTimerId = null;
+        this._closingId = null;
         this._timerEnabledId = null;
     }
 
@@ -90,20 +102,20 @@ class Extension {
         let messageText = this._settings.get_string('message-text') || 'It is time to stretch your back!';
         let iconName = this._settings.get_string('icon-name') || ICON;
         let urgencyLevel = this._settings.get_int('urgency-level');
+        let playSound = this._settings.get_boolean('play-sound');
+        let soundName = this._settings.get_string('sound-name') || 'complete';
+
         let mappedUrgency = urgencyMapping[urgencyLevel];
 
         let source = new MessageTray.Source(Me.metadata.name, iconName);
         Main.messageTray.add(source);
         let notification = new MessageTray.Notification(source, Me.metadata.name, messageText);
-        notification.setTransient(true);
         notification.setUrgency(mappedUrgency);
+        notification._soundName = soundName;
         source.showNotification(notification);
 
-        let playSound = this._settings.get_boolean('play-sound');
         if (playSound) {
-            let soundName = this._settings.get_string('sound-name') || 'complete';
-            let player = global.display.get_sound_player();
-            player.play_from_theme(soundName, Me.metadata.name, null);
+            notification.playSound();
         }
     }
 
@@ -220,6 +232,11 @@ class Extension {
                 }
             }
         }.bind(this));
+
+        // https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
+        this._closingId = global.display.connect('closing', () => {
+            this.disable();
+        })
     }
 
 
@@ -234,6 +251,8 @@ class Extension {
         this._settings = null;
         this._showTimerId = null;
         this._timerEnabledId = null;
+        global.display.disconnect(this._closingId);
+        this._closingId = null;
         this._indicator.destroy();
         this._indicator = null;
     }
