@@ -31,7 +31,7 @@ class FeatureMenuToggle extends QuickSettings.QuickMenuToggle {
     _init(_settings) {
         super._init({
             [toggleNameProperty]: Me.metadata.name,
-            iconName: ICON,
+            gicon: Gio.Icon.new_for_string(ICON),
             toggleMode: true,
         });
 
