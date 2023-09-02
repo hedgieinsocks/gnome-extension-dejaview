@@ -215,6 +215,12 @@ class Extension {
         this._settings = ExtensionUtils.getSettings();
         this._indicator = new FeatureIndicator(this._settings);
 
+        let autoStart = this._settings.get_boolean('auto-start');
+        if (autoStart) {
+            this._settings.set_boolean('timer-enabled', true);
+            this._startTimer();
+        }
+
         this._timerEnabledId = this._settings.connect('changed::timer-enabled', function (_, key) {
             if (this._settings.get_boolean(key)) {
                 this._startTimer();

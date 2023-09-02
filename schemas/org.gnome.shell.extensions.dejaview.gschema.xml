@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.dejaview" path="/org/gnome/shell/extensions/dejaview/">
+    <key name="auto-start" type="b">
+      <default>false</default>
+    </key>
     <key name="interval-min" type="i">
       <default>15</default>
     </key>

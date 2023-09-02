@@ -20,6 +20,28 @@ function fillPreferencesWindow(window) {
     page.add(groupGeneral);
     page.add(groupAudio);
 
+    // Auto Start
+    const rowAuto = new Adw.ActionRow({
+        title: 'Auto Start',
+        subtitle: 'Launch the timer at login and unlock',
+    });
+    groupGeneral.add(rowAuto);
+
+    const toggleAuto = new Gtk.Switch({
+        active: settings.get_boolean('auto-start'),
+        valign: Gtk.Align.CENTER,
+    });
+
+    settings.bind(
+        'auto-start',
+        toggleAuto,
+        'active',
+        Gio.SettingsBindFlags.DEFAULT
+    );
+
+    rowAuto.add_suffix(toggleAuto);
+    rowAuto.activatable_widget = toggleAuto;
+
     // Interval Minutes
     const rowInterval = new Adw.ActionRow({
         title: 'Interval',
@@ -79,7 +101,7 @@ function fillPreferencesWindow(window) {
     // Icon Name
     const rowIcon = new Adw.ActionRow({
         title: 'Icon Name',
-        subtitle: '/usr/share/icons',
+        subtitle: '/usr/share/icons/',
     });
     groupGeneral.add(rowIcon);
 
