@@ -77,9 +77,9 @@ export default class DejaviewExtension extends Extension {
 
         let mappedUrgency = urgencyMapping[urgencyLevel];
 
-        let source = new MessageTray.Source(Me.metadata.name, iconName);
+        let source = new MessageTray.Source(this.metadata.name, iconName);
         Main.messageTray.add(source);
-        let notification = new MessageTray.Notification(source, Me.metadata.name, messageText);
+        let notification = new MessageTray.Notification(source, this.metadata.name, messageText);
         notification.setUrgency(mappedUrgency);
         notification._soundName = soundName;
         source.showNotification(notification);
@@ -119,14 +119,14 @@ export default class DejaviewExtension extends Extension {
     }
 
     _addTimer() {
-        this._timer = new PanelMenu.Button(0.0, Me.metadata.name, false);
+        this._timer = new PanelMenu.Button(0.0, this.metadata.name, false);
         this._timerLabel = new St.Label({
             text: this._getTimeLeft(),
             y_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
         });
         this._timer.add_child(this._timerLabel);
-        Main.panel.addToStatusArea(Me.metadata.name, this._timer);
+        Main.panel.addToStatusArea(this.metadata.name, this._timer);
     }
 
     _removeTimer() {
