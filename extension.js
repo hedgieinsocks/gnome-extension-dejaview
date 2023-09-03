@@ -91,9 +91,9 @@ export default class DejaviewExtension extends Extension {
 
     _formatTime(totalSeconds) {
         const totalMinutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
+        let seconds = totalSeconds % 60;
+        let hours = Math.floor(totalMinutes / 60);
+        let minutes = totalMinutes % 60;
 
         if (hours < 10) {
             hours = "0" + hours;
