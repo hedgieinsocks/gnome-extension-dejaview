@@ -69,17 +69,17 @@ export default class DejaviewExtension extends Extension {
     }
 
     _notify() {
-        let messageText = this._settings.get_string("message-text") || "It is time to stretch your back!";
-        let iconName = this._settings.get_string("icon-name") || ICON;
-        let urgencyLevel = this._settings.get_int("urgency-level");
-        let playSound = this._settings.get_boolean("play-sound");
-        let soundName = this._settings.get_string("sound-name") || "complete";
+        const messageText = this._settings.get_string("message-text") || "It is time to stretch your back!";
+        const iconName = this._settings.get_string("icon-name") || ICON;
+        const urgencyLevel = this._settings.get_int("urgency-level");
+        const playSound = this._settings.get_boolean("play-sound");
+        const soundName = this._settings.get_string("sound-name") || "complete";
 
-        let mappedUrgency = urgencyMapping[urgencyLevel];
+        const mappedUrgency = urgencyMapping[urgencyLevel];
 
-        let source = new MessageTray.Source(this.metadata.name, iconName);
+        const source = new MessageTray.Source(this.metadata.name, iconName);
         Main.messageTray.add(source);
-        let notification = new MessageTray.Notification(source, this.metadata.name, messageText);
+        const notification = new MessageTray.Notification(source, this.metadata.name, messageText);
         notification.setUrgency(mappedUrgency);
         notification._soundName = soundName;
         source.showNotification(notification);
@@ -90,10 +90,10 @@ export default class DejaviewExtension extends Extension {
     }
 
     _formatTime(totalSeconds) {
-        let totalMinutes = Math.floor(totalSeconds / 60);
-        let seconds = totalSeconds % 60;
-        let hours = Math.floor(totalMinutes / 60);
-        let minutes = totalMinutes % 60;
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
 
         if (hours < 10) {
             hours = "0" + hours;
@@ -184,7 +184,7 @@ export default class DejaviewExtension extends Extension {
 
         Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
 
-        let autoStart = this._settings.get_boolean("auto-start");
+        const autoStart = this._settings.get_boolean("auto-start");
         if (autoStart) {
             this._settings.set_boolean("timer-enabled", true);
             this._startTimer();
