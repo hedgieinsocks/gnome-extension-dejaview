@@ -11,6 +11,7 @@ import GLib from "gi://GLib";
 import St from "gi://St";
 
 const ICON = "alarm-symbolic";
+const SOUND = "complete";
 
 const urgencyMapping = {
     0: MessageTray.Urgency.LOW,
@@ -73,7 +74,7 @@ export default class DejaviewExtension extends Extension {
         const iconName = this._settings.get_string("icon-name") || ICON;
         const urgencyLevel = this._settings.get_int("urgency-level");
         const playSound = this._settings.get_boolean("play-sound");
-        const soundName = this._settings.get_string("sound-name") || "complete";
+        const soundName = this._settings.get_string("sound-name") || SOUND;
 
         const mappedUrgency = urgencyMapping[urgencyLevel];
 
@@ -81,12 +82,10 @@ export default class DejaviewExtension extends Extension {
         Main.messageTray.add(source);
         const notification = new MessageTray.Notification(source, this.metadata.name, messageText);
         notification.setUrgency(mappedUrgency);
-        notification._soundName = soundName;
-        source.showNotification(notification);
-
         if (playSound) {
-            notification.playSound();
+            notification._soundName = soundName;
         }
+        source.showNotification(notification);
     }
 
     _formatTime(totalSeconds) {
@@ -179,6 +178,8 @@ export default class DejaviewExtension extends Extension {
 
     enable() {
         this._settings = this.getSettings();
+        // https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
+        this._settings.set_boolean("timer-enabled", false);
         this._indicator = new DejaviewIndicator(this);
         this._indicator.quickSettingsItems.push(new DejaviewMenuToggle(this));
 
