@@ -1,4 +1,4 @@
-# ⏰ Dejaview - GNOME extension
+# Dejaview
 
 ## Show a notification with a chosen frequency
 

@@ -4,5 +4,5 @@
     "description": "Show a notification with a chosen frequency",
     "shell-version": ["45"],
     "settings-schema": "org.gnome.shell.extensions.dejaview",
-    "url": "https://github.com/hedgieinsocks/dejaview"
+    "url": "https://github.com/hedgieinsocks/gnome-extension-dejaview"
 }
