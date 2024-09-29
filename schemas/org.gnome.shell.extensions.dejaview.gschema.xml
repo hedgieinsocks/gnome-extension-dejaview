@@ -19,12 +19,6 @@
     <key name="icon-name" type="s">
       <default>"alarm-symbolic"</default>
     </key>
-    <key name="play-sound" type="b">
-      <default>false</default>
-    </key>
-    <key name="sound-name" type="s">
-      <default>"complete"</default>
-    </key>
     <key name="urgency-level" type="i">
       <default>1</default>
     </key>
