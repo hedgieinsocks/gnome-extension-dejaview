@@ -13,8 +13,6 @@ import St from "gi://St";
 const ICON = "alarm-symbolic";
 const TEXT = "It is time to stretch your back!";
 
-const systemSource = MessageTray.getSystemSource();
-
 const urgencyMapping = {
   0: MessageTray.Urgency.LOW,
   1: MessageTray.Urgency.NORMAL,
@@ -80,6 +78,7 @@ export default class DejaviewExtension extends Extension {
     this._lastSec = null;
     this._diffSec = null;
     this._settings = null;
+    this._source = null;
     this._showTimerId = null;
     this._closingId = null;
     this._timerEnabledId = null;
@@ -92,14 +91,14 @@ export default class DejaviewExtension extends Extension {
     const mappedUrgency = urgencyMapping[urgencyLevel];
 
     const notification = new MessageTray.Notification({
-      source: systemSource,
+      source: this._source,
       iconName: iconName,
       title: this.metadata.name,
       body: messageText,
       urgency: mappedUrgency,
     });
 
-    systemSource.addNotification(notification);
+    this._source.addNotification(notification);
   }
 
   _formatTime(totalSeconds) {
@@ -195,6 +194,7 @@ export default class DejaviewExtension extends Extension {
   }
 
   enable() {
+    this._source = MessageTray.getSystemSource();
     this._settings = this.getSettings();
     // https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
     this._settings.set_boolean("timer-enabled", false);
@@ -243,7 +243,6 @@ export default class DejaviewExtension extends Extension {
     if (this._notifyLoop) {
       this._stopTimer();
     }
-
     this._settings.set_boolean("timer-enabled", false);
     this._settings.disconnect(this._showTimerId);
     this._settings.disconnect(this._timerEnabledId);
@@ -255,5 +254,6 @@ export default class DejaviewExtension extends Extension {
     this._indicator.quickSettingsItems.forEach((item) => item.destroy());
     this._indicator.destroy();
     this._indicator = null;
+    this._source = null;
   }
 }
