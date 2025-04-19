@@ -78,27 +78,26 @@ export default class DejaviewExtension extends Extension {
     this._lastSec = null;
     this._diffSec = null;
     this._settings = null;
-    this._source = null;
     this._showTimerId = null;
-    this._closingId = null;
     this._timerEnabledId = null;
   }
 
   _notify() {
+    const source = MessageTray.getSystemSource();
     const messageText = this._settings.get_string("message-text") || TEXT;
     const iconName = this._settings.get_string("icon-name") || ICON;
     const urgencyLevel = this._settings.get_int("urgency-level");
     const mappedUrgency = urgencyMapping[urgencyLevel];
 
     const notification = new MessageTray.Notification({
-      source: this._source,
+      source: source,
       iconName: iconName,
       title: this.metadata.name,
       body: messageText,
       urgency: mappedUrgency,
     });
 
-    this._source.addNotification(notification);
+    source.addNotification(notification);
   }
 
   _formatTime(totalSeconds) {
@@ -194,20 +193,13 @@ export default class DejaviewExtension extends Extension {
   }
 
   enable() {
-    this._source = MessageTray.getSystemSource();
     this._settings = this.getSettings();
     // https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
     this._settings.set_boolean("timer-enabled", false);
+
     this._indicator = new DejaviewIndicator(this);
     this._indicator.quickSettingsItems.push(new DejaviewMenuToggle(this));
-
     Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
-
-    const autoStart = this._settings.get_boolean("auto-start");
-    if (autoStart) {
-      this._settings.set_boolean("timer-enabled", true);
-      this._startTimer();
-    }
 
     this._timerEnabledId = this._settings.connect(
       "changed::timer-enabled",
@@ -233,10 +225,9 @@ export default class DejaviewExtension extends Extension {
       }.bind(this),
     );
 
-    // https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/2621
-    this._closingId = global.display.connect("closing", () => {
-      this.disable();
-    });
+    if (this._settings.get_boolean("auto-start")) {
+      this._settings.set_boolean("timer-enabled", true);
+    }
   }
 
   disable() {
@@ -250,10 +241,8 @@ export default class DejaviewExtension extends Extension {
     this._showTimerId = null;
     this._timerEnabledId = null;
     global.display.disconnect(this._closingId);
-    this._closingId = null;
     this._indicator.quickSettingsItems.forEach((item) => item.destroy());
     this._indicator.destroy();
     this._indicator = null;
-    this._source = null;
   }
 }
